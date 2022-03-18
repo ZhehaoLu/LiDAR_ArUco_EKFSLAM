@@ -1,4 +1,4 @@
-# LiDAR_ArUco_EKFSLAM
+# LiDAR ArUco EKF SLAM
 ## Project Overview
 This repository builds feature-based EKF SLAM on `Turtlebot3` from scratch. 
 The core modules are:
@@ -8,7 +8,7 @@ The core modules are:
   - ArUco measurement - known data association in `aruco_ekf_slam` package
 
 Please navigate to the respective directories for a detailed description of each component.
-## LiDAR_EKF_SLAM - LiDAR measurement
+## LiDAR EKF SLAM - LiDAR measurement
 ### Core Component
 - `turtlelib` - contains 2D Lie Group operations for Transforms, Vectors and Twists as well as differential drive robot kinematics for odometry updates
 - `nuturtle_description` - houses the description of a differential drive robot with a caster wheel for support
@@ -28,7 +28,7 @@ Please navigate to the respective directories for a detailed description of each
 - `catkin_make` - build the package
 - `roslaunch nuslam unknown_data_assoc.launch` - launch `LiDAR EKF SLAM` algorithm with unknown data association 
 
-## ArUco_EKF_SLAM - ArUco measurement
+## ArUco EKF SLAM - ArUco measurement
 ### Dataset
 Dataset Link: https://pan.baidu.com/s/10crRfgGcZ-XgcBjefxAPDg     Password: pqby
 - The launch file (slam.launch) should be modified to the correct download path
