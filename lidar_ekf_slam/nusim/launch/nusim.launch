@@ -1,0 +1,35 @@
+<launch>
+
+    <arg name="use_jsp" default='true' doc="launch joint_state_publisher to publish joint state"/>
+    
+    <arg name="color" default="red" />
+    
+    <arg name="config_file" default="default_file" />
+    
+    <param name="red/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    color:=$(arg color) 
+    "
+    />
+    <group if="$(eval arg('config_file') == 'default_file')">
+        <rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml" />
+    </group>
+    
+    <rosparam file="$(find nusim)/config/basic_world.yaml" command="load" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="$(arg color)"></node>
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" ns="$(arg color)"></node>
+ 
+   
+  
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find nusim)/config/nusim.rviz" required="true" ns="$(arg color)" output="screen"/>
+
+    <node pkg="nusim" type="nusim" name="nusim" ns="$(arg color)" output="screen">
+    	<remap from="/$(arg color)/sensor_data" to="/sensor_data"/>
+		  <remap from="/$(arg color)/wheel_cmd" to="/wheel_cmd"/>
+		  <remap from="/$(arg color)/obstacles" to="/obstacles"/>
+		  <remap from="/$(arg color)/Wall" to="/Wall"/> 
+    </node> 
+    
+    
+
+</launch>

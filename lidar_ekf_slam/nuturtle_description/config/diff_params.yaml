@@ -1,0 +1,28 @@
+# The radius of the wheels (r)
+wheel_radius: 0.033
+# The width of the wheels 
+wheel_width: 0.018
+# The collision radius of the robot
+collision_radius: 0.11
+# The width of the robot (D)
+track_width: 0.16
+# Commands of motors provided in the range of [-motor_cmd_max, motor_cmd_max]
+motor_cmd_max: 265
+# Converts encoder ticks to radians
+encoder_ticks_to_rad: 4096
+# Converts between ticks and rad/sec
+motor_cmd_to_radsec: 0.024
+# Name of the body frame
+body_id: red/base_footprint
+# Name of the odometry frame
+odom_id: odom
+# Name of the left wheel joint
+wheel_left: wheel_left_link
+# Name of the right wheel joint
+wheel_right: wheel_right_link
+# wheel_cmd messages [-wheel_cmd_max,wheel_cmd_max] (proportional to max rotational velocity of the motor)
+wheel_cmd_max: 256
+# max rotational velocity of the motor
+motor_rotate_maxvel: 6.36
+
+

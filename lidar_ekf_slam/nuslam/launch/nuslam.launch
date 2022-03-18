@@ -1,0 +1,76 @@
+<launch>
+
+<arg name="robot" default="nusim" doc="robot choice"/>
+
+<arg name="color1" default="green" doc="slam robot"/>
+<param name="color1" value="$(arg color1)"/>
+
+<arg name="color2" default="red" doc="real robot"/>
+<param name="color2" value="$(arg color2)"/>
+
+<arg name="color3" default="blue" doc="odometry robot"/>
+<param name="color3" value="$(arg color3)"/>
+
+<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml" />
+<rosparam command="load" file="$(find nusim)/config/basic_world.yaml"/>
+
+<node pkg="nusim" type="nusim" name="nusim" output="screen" ns="$(arg color2)">
+	<remap from="/red/sensor_data" to="/sensor_data"/>
+	<remap from="/red/wheel_cmd" to="/wheel_cmd"/>
+    <remap from="/red/cmd_vel" to="/cmd_vel"/>
+	<remap from="/red/obstacles" to="/obstacles"/>
+	<remap from="/red/Wall" to="/Wall"/> 
+</node>
+
+<node pkg="nuslam" type="odometry_slam" name="odometry_slam" output="screen" ns="$(arg color3)">
+    <remap from="/$(arg color3)/odom" to="/odom"/>
+    <remap from="/$(arg color3)/joint_states" to="/joint_states"/>
+</node>
+
+<node pkg="nuturtle_control" type="turtle_interface" name="turtle_interface" ns="$(arg color3)" output="screen">
+    
+    <remap from="/$(arg color3)/cmd_vel" to="/cmd_vel"/>   
+    <remap from="/$(arg color3)/sensor_data" to="/sensor_data"/>
+    <remap from="/$(arg color3)/wheel_cmd" to="/wheel_cmd"/>  
+    <remap from="/$(arg color3)/joint_states" to="/joint_states"/>
+    
+</node>
+
+<node pkg="nuslam" type="nuslam_node" name="nuslam_node" ns="$(arg color1)" output="screen">
+    <remap from="/$(arg color1)/odom" to="/odom"/>
+    <remap from="/$(arg color1)/joint_states" to="/joint_states"/>
+</node>
+
+<param name="$(arg color1)/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    ns:=$(arg color1) 
+    color:=$(arg color1) 
+    "
+    />
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher1" ns="$(arg color1)"></node>
+<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher1" ns="$(arg color1)"></node>
+
+<param name="$(arg color2)/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    ns:=$(arg color2) 
+    color:=$(arg color2) 
+    "
+    />
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher2" ns="$(arg color2)"></node>
+<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher2" ns="$(arg color2)"></node>
+
+<param name="$(arg color3)/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    ns:=$(arg color3) 
+    color:=$(arg color3) 
+    "
+    />
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher3" ns="$(arg color3)"></node>
+<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher3" ns="$(arg color3)"></node>
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find nuslam)/config/slam.rviz" output="screen"/>
+
+<node pkg="tf" type="static_transform_publisher" name="world_to_greenodom" args="0 0 0 0 0 0 world map 100" />
+
+<node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_key" output="screen"/>
+
+</launch>
+
+

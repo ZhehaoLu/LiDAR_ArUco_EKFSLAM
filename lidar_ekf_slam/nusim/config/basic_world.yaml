@@ -1,0 +1,71 @@
+
+#initial setting
+initial_setting:
+    loop_rate_setting: 100
+    
+#initial pose
+initial_pose:
+    x_0: -0.6
+    y_0: 0.8
+    theta_0: 1.57
+    
+#cylindrical
+marker_number: 3
+marker_radius: 0.2
+marker_x0: -0.6
+marker_y0: -0.8
+marker_x1: 0.6
+marker_y1: -0.8
+marker_x2: 0.6
+marker_y2: 0.8
+max_range: 1.5
+
+#wall
+wall_settings:
+    x_length: 8
+    y_length: 6
+    wall_thickness: 0.02
+    
+#gaussian distribution
+gaussian_distribution:
+    mean: 0.0
+    variance: 0.01
+
+#uniform distribution    
+uniform_distribution:
+    slip_min: 0.0
+    slip_max: 0.01
+
+# basic sensor noise
+basic_sensor_noise:
+    basic_sensor_mean: 0.0
+    basic_sensor_variance: 0.01
+
+# sim lidar noise
+sim_lidar_noise:
+    sim_lidar_mean: 0.0
+    sim_lidar_variance: 0.01
+
+sim_lidar:
+    sim_lidar_maxrange: 3.50
+    
+# circle fitting
+circle_fitting:
+    threshold_dist: 0.4
+    threshold_singularvalue: 10e-12
+    threshold_variance: 0.15
+    threshold_minmean: 0.50
+    threshold_maxmean: 0.75
+    threshold_minradius: 0.5
+    threshold_maxradius: 1.5
+    min_pointnumber: 3
+    
+
+
+
+
+
+
+
+
+

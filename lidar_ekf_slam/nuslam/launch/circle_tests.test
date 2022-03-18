@@ -1,0 +1,10 @@
+<launch>
+
+    <node name="landmarks" pkg="nuslam" type="landmarks" output="screen"/>
+
+    <rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml" />
+    <rosparam command="load" file="$(find nusim)/config/basic_world.yaml"  />
+
+    <test test-name="circle_test" name="circle_test" pkg="nuslam" type="circle_test"/>
+
+</launch>

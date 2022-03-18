@@ -1,0 +1,99 @@
+
+<launch>
+    
+    <arg name="cmd_src" default="circle" doc="cmd_vel commands resource (circle/teleop/none)"/>
+    <arg name="robot" default="nusim" doc="controls which robot to use (nusim/localhost/turtlebotname)"/>
+    <arg name="use_rviz" default='false' doc="controls whether rviz is launched"/>
+    <arg name="scene" default='nusim' doc="draw the actual obstacle locations and walls"/>
+
+    <arg name="color" default="blue" />
+    <param name="color" value="$(arg color)"/>
+
+    <arg name="color2" default="red" />
+    
+    <rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml" />
+    <rosparam command="load" file="$(find nusim)/config/basic_world.yaml"/>
+    
+    <group if="$(eval arg('cmd_src') == 'circle')">
+       <node pkg="nuturtle_control" type="circle" name="circle" ns="$(arg color)" output="screen">
+       <remap from="/$(arg color)/cmd_vel" to="/cmd_vel"/>
+    </node>
+    </group>
+    
+    <group if="$(eval arg('cmd_src') == 'teleop')">
+    	<node pkg="turtlebot3_teleop" type="turtlebot3_teleop_key" name="turtlebot3_teleop_key" output="screen"/>
+    </group>
+    
+   
+    
+    <group if="$(eval arg('robot') == 'nusim')">
+        <node pkg="nusim" type="nusim" name="nusim" output="screen" ns="red">
+		    <remap from="/red/sensor_data" to="/sensor_data"/>
+		    <remap from="/red/wheel_cmd" to="/wheel_cmd"/>
+		    <remap from="/red/obstacles" to="/obstacles"/>
+            <remap from="/$(arg color)/joint_states" to="/joint_states"/> 
+		    <remap from="/red/Wall" to="/Wall"/>
+            <param name="scene" value="$(arg scene)"/>   
+        </node>
+        <node pkg="nuturtle_control" type="turtle_interface" name="turtle_interface" ns="$(arg color)" output="screen">
+    
+    <remap from="/$(arg color)/cmd_vel" to="/cmd_vel"/>   
+    <remap from="/$(arg color)/sensor_data" to="/sensor_data"/>
+    <remap from="/$(arg color)/wheel_cmd" to="/wheel_cmd"/>  
+    <remap from="/$(arg color)/joint_states" to="/joint_states"/>
+    
+    </node>
+     
+    <node pkg="nuturtle_control" type="odometry" name="odometry" ns="$(arg color)" output="screen">
+    
+    <remap from="/$(arg color)/odom" to="/odom"/>
+    <remap from="/$(arg color)/joint_states" to="/joint_states"/>
+    </node>
+
+    <group if="$(eval arg('scene') == 'nusim')">
+    <param name="red/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    ns:=$(arg color2) 
+    color:=$(arg color2) 
+    "
+    />
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher2" ns="$(arg color2)"></node>
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher2" ns="$(arg color2)"></node>
+    </group> 
+
+    <group if="$(eval arg('use_rviz') == true)">
+        <group if="$(eval arg('scene') == 'nusim')">
+            <node name="rviz" pkg="rviz" type="rviz" args="-d $(find nuturtle_control)/config/nuturtle_control_both.rviz" output="screen"/>
+        </group>
+        <group if="$(eval arg('scene') == 'nuwall')">
+            <node name="rviz" pkg="rviz" type="rviz" args="-d $(find nuturtle_control)/config/nuturtle_control.rviz" output="screen"/>
+        </group>
+    </group> 
+
+    </group>
+    
+    <group if="$(eval arg('robot') != 'nusim')">
+    	<include file="$(find nuturtle_control)/launch/basic_remote.launch">
+             <arg name="robot" value="$(arg robot)"/>
+             <arg name="scene" value="$(arg scene)"/>
+        </include>
+
+          <group if="$(eval arg('use_rviz') == true)">
+            <node name="rviz" pkg="rviz" type="rviz" args="-d $(find nuturtle_control)/config/nuturtle_control.rviz" output="screen"/>
+        </group>
+    </group>
+
+    <param name="blue/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    ns:=$(arg color) 
+    color:=$(arg color) 
+    "
+    />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="$(arg color)"></node>
+    
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" ns="$(arg color)"></node>
+    
+    <node pkg="tf" type="static_transform_publisher" name="world_to_odom" args="0 0 0 0 0 0 world odom 100" />
+    <node pkg="tf" type="static_transform_publisher" name="basefootprint_to_laser" args="0 0 0 0 0 0 blue/base_footprint laser 100" />
+ 
+
+</launch>

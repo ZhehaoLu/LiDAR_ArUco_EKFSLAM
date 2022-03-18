@@ -1,0 +1,18 @@
+<launch>
+    <arg name="color2" default="blue" />
+
+    <node name="odometry" pkg="nuturtle_control" type="odometry" output="screen" ns="$(arg color2)" />
+
+    <rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml" />
+    <rosparam command="load" file="$(find nusim)/config/basic_world.yaml"  />
+
+    <test test-name="turtle_odom_test_node" name="turtle_odom_test_node" pkg="nuturtle_control" type="turtle_odom_test_node"/>
+
+    <param name="blue/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    color:=$(arg color2) 
+    "
+    />
+
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher2" ns="$(arg color2)"></node>
+
+</launch>

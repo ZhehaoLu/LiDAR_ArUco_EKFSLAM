@@ -1,0 +1,31 @@
+<launch>
+
+<arg name="robot" default="nusim" doc="robot choice"/>
+
+<arg name="color2" default="red" doc="real robot"/>
+<param name="color2" value="$(arg color2)"/>
+
+<param name="red/robot_description" command="xacro '$(find nuturtle_description)/urdf/turtlebot3_burger.urdf.xacro'
+    color:=$(arg color2) 
+    "
+    />
+<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="$(arg color2)"></node>
+<node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" ns="$(arg color2)"></node>
+
+<rosparam command="load" file="$(find nuturtle_description)/config/diff_params.yaml" />
+<rosparam file="$(find nusim)/config/basic_world.yaml" command="load" />
+
+<node pkg="nusim" type="nusim" name="nusim" output="screen" ns="$(arg color2)">
+	<remap from="/red/sensor_data" to="/sensor_data"/>
+	<remap from="/red/wheel_cmd" to="/wheel_cmd"/>
+    <remap from="/red/cmd_vel" to="/cmd_vel"/>
+	<remap from="/red/obstacles" to="/obstacles"/>
+	<remap from="/red/Wall" to="/Wall"/> 
+</node>
+
+<node pkg="nuslam" type="landmarks" name="landmarks" output="screen">
+</node>
+
+<node name="rviz" pkg="rviz" type="rviz" args="-d $(find nuslam)/config/landmark.rviz" required="true" ns="$(arg color2)" output="screen"/>
+
+</launch>
