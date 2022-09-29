@@ -1,8 +1,4 @@
 <launch>
-	
-
-	
-	
 
 	<node pkg="aruco_ekf_slam" type="slam_node" name="slam_node" output="screen">
       <rosparam file="$(find aruco_ekf_slam)/settings/default.yaml" command="load" />
